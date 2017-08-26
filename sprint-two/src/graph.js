@@ -1,5 +1,4 @@
 
-
 // Instantiate a new graph
 var Graph = function() {
   this.storage = {};
@@ -8,6 +7,7 @@ var Graph = function() {
 // Add a node to the graph, passing in the node's value.
 Graph.prototype.addNode = function(node) {
   this.storage[node] = {};
+  this.storage[node].edges = [];
 };
 
 // Return a boolean value indicating if the value passed to contains is represented in the graph.
@@ -17,25 +17,40 @@ Graph.prototype.contains = function(node) {
 
 // Removes a node from the graph.
 Graph.prototype.removeNode = function(node) {
+  var array = this.storage[node].edges;
+  
+  for (var i = 0; i < array.length; i++) {
+    var pointer = this.storage[i].edges.indexOf(node);
+    this.storage[i].edges.splice(pointer, 1);     
+  }
   delete this.storage[node];
 };
 
 // Returns a boolean indicating whether two specified nodes are connected.  Pass in the values contained in each of the two nodes.
 Graph.prototype.hasEdge = function(fromNode, toNode) {
-  return this.storage[fromNode].edge === toNode;
+  var edgesArray = this.storage[fromNode].edges;
+  debugger;
+  if (edgesArray.indexOf(toNode)) {
+    return true;
+  }
+  var otherEdgesArray = this.storage[toNode].edges;
+  if (edgesArray.indexOf(fromNode)) {
+    return true;
+  }
+  return false;
 };
 
 // Connects two nodes in a graph by adding an edge between them.
 Graph.prototype.addEdge = function(fromNode, toNode) {
-  this.storage[fromNode].edge = toNode;
-  this.storage[toNode].edge = fromNode;
+  this.storage[fromNode].edges.push(toNode);
+  this.storage[toNode].edges.push(fromNode);
   
 };
 
 // Remove an edge between any two specified (by value) nodes.
 Graph.prototype.removeEdge = function(fromNode, toNode) {
-  this.storage[fromNode].edge = null;
-  this.storage[toNode].edge = null;
+  this.storage[fromNode].edges = null;
+  this.storage[toNode].edges = null;
 };
 
 // Pass in a callback which will be executed on each node of the graph.
@@ -48,14 +63,11 @@ Graph.prototype.forEachNode = function(cb) {
 
 var graph = new Graph();
 graph.addNode(2);
-graph.addNode(1);
-graph.addNode(3);
-graph.addEdge(3, 2);
+graph.contains(2);//true
 
-console.log(graph.storage)
+graph.removeNode(2);
 
 
-
-
+console.log(graph.contains(2));
 
 
